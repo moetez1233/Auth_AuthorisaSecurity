@@ -42,10 +42,10 @@ public class AuthorisationFilter extends OncePerRequestFilter {
 		} else {
 System.out.println("hello");
 			String authorisationHeader = request.getHeader(AUTHORIZATION);
-			if (authorisationHeader != null && authorisationHeader.startsWith("ODM ")) {
+			if (authorisationHeader != null && authorisationHeader.startsWith("Bearer ")) {
 				try {
 					System.out.println("Token valid");
-					String token = authorisationHeader.substring("ODM ".length());// we just need the token without ODM
+					String token = authorisationHeader.substring("Bearer ".length());// we just need the token without ODM
 					Algorithm algotithm = Algorithm.HMAC256("secret".getBytes());
 					JWTVerifier verifier = JWT.require(algotithm).build();
 					DecodedJWT decodedJWT = verifier.verify(token);
