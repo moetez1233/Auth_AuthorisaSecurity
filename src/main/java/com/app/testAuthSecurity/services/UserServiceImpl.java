@@ -3,7 +3,9 @@ package com.app.testAuthSecurity.services;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
+import com.app.testAuthSecurity.customException.ResourceExistException;
 import com.app.testAuthSecurity.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +32,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User saveUser(User user) {
+		if (getUser(user.getEmail()).isPresent()){
+			throw new ResourceExistException("Utilisateur "+user.getEmail()+" est déja existe ");
+		}
+
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
@@ -40,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUser(String email) {
+	public Optional<User> getUser(String email) {
 		// TODO Auto-generated method stub
 		return userRepo.findByEmail(email);
 	}
@@ -54,7 +60,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user=userRepo.findByEmail(email);
+		User user=userRepo.findByEmail(email).get();
 		if(user==null) throw new UsernameNotFoundException(email);
 		Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
 		//System.out.println("user_implementation : "+user.getRoles());
@@ -68,7 +74,7 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public void addRoleToUser(String email) {
-		User user=userRepo.findByEmail(email);
+		User user=userRepo.findByEmail(email).get();
 		System.out.println("user est : "+user);
 		
 		List<Role> role=roleRopo.findAll();
@@ -84,9 +90,17 @@ public class UserServiceImpl implements UserService {
 		userRepo.save(user);
 		
 	}
-	
 
-	
-
-
+	@Override
+	public void iniTialUserTest() {
+		List<Role> roles =new ArrayList<>();
+		roles.add(new Role("consulter_users"));
+		roles.add(new Role("ajouter_users"));
+		System.out.println("role main : "+roles);
+		saveUser(new User("Admin", "root@gmail.com", "root123", roles));
+		//System.out.println(userService.getUsers());
+		List<Role> rolesUser2 =new ArrayList<>();
+		rolesUser2.add(new Role("consulter_users"));
+		saveUser(new User("moetez", "moetezmaddouri@gmail.com", "root123", rolesUser2));
+	}
 }

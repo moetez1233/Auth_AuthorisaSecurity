@@ -25,24 +25,6 @@ public class TestAuthSecurityApp {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-@Bean
-	CommandLineRunner run(UserService userService) {
-		return args -> {
-			//userService.saveRole(new Role("Add"));
-			//userService.saveUser(new User("moetez", "moetezmaddouri@gmail.com", "12356sdf", new ArrayList<>()));
-		
-			List<Role> roles =new ArrayList<>();
-			roles.add(new Role("consulter_users"));
-			roles.add(new Role("ajouter_users"));
-			System.out.println("role main : "+roles);
-			userService.saveUser(new User("Admin", "root@gmail.com", "root123", roles));
-			//System.out.println(userService.getUsers());
-			List<Role> rolesUser2 =new ArrayList<>();
-			rolesUser2.add(new Role("consulter_users"));
-			userService.saveUser(new User("moetez", "moetezmaddouri@gmail.com", "root123", rolesUser2));
 
-			
-		};
-	}
 
 }

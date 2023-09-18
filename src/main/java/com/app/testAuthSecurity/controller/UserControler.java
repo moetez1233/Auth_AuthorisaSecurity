@@ -63,7 +63,7 @@ public class UserControler {
 				JWTVerifier verifier = JWT.require(algotithm).build();// veif token
 				DecodedJWT decodedJWT = verifier.verify(refresh_Token);//decode token
 				String userName = decodedJWT.getSubject();
-				User user=UserServiceImpl.getUser(userName);
+				User user=UserServiceImpl.getUser(userName).get();
 			
 				String access_token=JWT.create()
 						.withSubject(user.getEmail())
